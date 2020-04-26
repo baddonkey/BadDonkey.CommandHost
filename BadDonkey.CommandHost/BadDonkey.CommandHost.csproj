@@ -5,6 +5,7 @@
     <PackageId>BadDonkey.CommandHost</PackageId>
     <Authors>baddonkey</Authors>
     <Version>1.0.0</Version>
+    <Description>Generic .NET Core host that executes a sequence of commands.</Description>
     
   </PropertyGroup>
 
