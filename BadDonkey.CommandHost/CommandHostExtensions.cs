@@ -21,13 +21,13 @@ namespace BadDonkey.CommandHost
             return configuration[key].ToObject<List<Command>>(serializer);
         }
 
-        public static IHostBuilder UseCommandHost(this IHostBuilder hostBuilder, string commandFile, Assembly commandAssembly = null)
+        public static IHostBuilder UseCommandHost(this IHostBuilder hostBuilder, string commandFile, string section, Assembly commandAssembly = null)
         {
             hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
             var commands = JObject
                 .Parse(File.ReadAllText(commandFile))
-                .GetCommandsFromAssembly("SomeCommands", commandAssembly)
+                .GetCommandsFromAssembly(section, commandAssembly)
                 .GetEnumerator();
 
             hostBuilder.ConfigureServices((hostContext, services) =>services.AddHostedService(p => p.GetService<ICommandProcessor>()));

@@ -16,7 +16,7 @@ namespace Samples.App
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseCommandHost("./appsettings.json", typeof(PrepareCommand).Assembly)
+                .UseCommandHost("./appsettings.json", "SomeCommands", typeof(PrepareCommand).Assembly)
                 .ConfigureContainer<ContainerBuilder>(b => b.RegisterDecorator<SampleProcessor, ICommandProcessor>());
     }
 }
