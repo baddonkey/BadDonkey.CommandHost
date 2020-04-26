@@ -6,6 +6,11 @@
     <Authors>baddonkey</Authors>
     <Version>1.0.0</Version>
     <Description>Generic .NET Core host that executes a sequence of commands.</Description>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Copyright>© 2020 BadDonkey</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/baddonkey/BadDonkey.CommandHost</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/baddonkey/BadDonkey.CommandHost</RepositoryUrl>
     
   </PropertyGroup>
 
@@ -26,6 +31,13 @@
     <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
       <HintPath>..\..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\3.1.0\ref\netcoreapp3.1\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
