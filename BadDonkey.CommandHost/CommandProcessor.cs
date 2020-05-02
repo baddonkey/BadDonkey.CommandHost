@@ -17,21 +17,10 @@ namespace BadDonkey.CommandHost
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _commands.Reset();
-
-            while (_commands.MoveNext())
-            {
-                using var lifetimeScope = AutoFacContainerProvider.Container.BeginLifetimeScope();
-
-                var command = _commands.Current;
-
-                if (command == null) 
-                    continue;
-
-                var handler = lifetimeScope.ResolveNamed<ICommandHandler>(command.GetType().Name.Split("Command").First());
-                ((dynamic)handler).Run();
-            }
-
+            
+#pragma warning disable 4014
+            RunAll();
+#pragma warning restore 4014
             return Task.CompletedTask;
         }
 
@@ -39,5 +28,24 @@ namespace BadDonkey.CommandHost
         {
             return Task.CompletedTask;
         }
+
+        private async Task RunAll()
+        {
+            _commands.Reset();
+
+            while (_commands.MoveNext())
+            {
+                await using var lifetimeScope = AutoFacContainerProvider.Container.BeginLifetimeScope();
+
+                var command = _commands.Current;
+
+                if (command == null)
+                    continue;
+
+                var handler = lifetimeScope.ResolveNamed<ICommandHandler>(command.GetType().Name.Split("Command").First());
+                await((dynamic)handler).Run();
+            }
+        }
+
     }
 }
