@@ -17,7 +17,7 @@ namespace Samples.Commands
 
         public Task Run()
         {
-            _logger.LogInformation($"Run: {_command.GetType().Name}: Name: {_command.Name}");
+            _logger.LogInformation($"PrepareHandler.Run: do nothing: {_command.Name}");
             return Task.CompletedTask;
         }
     }

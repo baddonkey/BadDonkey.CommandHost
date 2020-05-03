@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BadDonkey.CommandHost;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +16,12 @@ namespace Samples.Commands
             _command = command;
         }
 
-        public Task Run()
+        public async Task Run()
         {
-            _logger.LogInformation($"Run: {_command.GetType().Name}: Host: {_command.Host}");
-            return Task.CompletedTask;
+            _logger.LogInformation($"Snooze ... {_command.Host}");
+            await Task.Delay(TimeSpan.FromSeconds(10));
+
+            throw new Exception("Sample Exception");
         }
     }
 }
