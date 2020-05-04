@@ -25,15 +25,15 @@ namespace BadDonkey.CommandHost
         {
             hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-            var commands = JObject
-                .Parse(File.ReadAllText(commandFile))
-                .GetCommandsFromAssembly(section, commandAssembly)
-                .GetEnumerator();
+            var commands = JObject.Parse(File.ReadAllText(commandFile))
+                .GetCommandsFromAssembly(section, commandAssembly).GetEnumerator();
 
             hostBuilder.ConfigureServices((hostContext, services) =>services.AddHostedService(p => p.GetService<ICommandProcessor>()));
 
             hostBuilder.ConfigureContainer<ContainerBuilder>((y, b) =>
             {
+                var commandList = new CommandList();
+
                 while(commands.MoveNext())
                 {
                     var command = commands.Current;
@@ -41,12 +41,16 @@ namespace BadDonkey.CommandHost
                     if (command == null)
                         return;
 
-                    b.Register(c => Convert.ChangeType(command, command.GetType())).As(command.GetType());
+                    commandList.Add(command);
+
+                    b.Register(c => Convert.ChangeType(commandList.Current, command.GetType())).As(command.GetType());
 
                 }
 
                 b.RegisterBuildCallback(x => AutoFacContainerProvider.Container = x);
-                b.Register(s => commands).As<IEnumerator<Command>>();
+                
+                b.Register(s => commandList).SingleInstance();
+
                 b.RegisterType<CommandProcessor>().As<ICommandProcessor>().SingleInstance();
 
                 if (commandAssembly != null)

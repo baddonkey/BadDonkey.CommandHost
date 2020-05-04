@@ -23,5 +23,7 @@ namespace Samples.Commands
 
             throw new Exception("Sample Exception");
         }
+
+        public Command Command => _command;
     }
 }

@@ -10,12 +10,12 @@ namespace BadDonkey.CommandHost
     public class CommandProcessor : ICommandProcessor
     {
         private readonly List<CommandException> _commandCommandExceptions = new List<CommandException>();
-        private readonly IEnumerator<Command> _commands;
+        private readonly CommandList _commandList;
 
 
-        public CommandProcessor(IEnumerator<Command> commands)
+        public CommandProcessor(CommandList commandList)
         {
-            _commands = commands;
+            _commandList = commandList;
         }
 
         public IReadOnlyList<CommandException> CommandExceptions => _commandCommandExceptions;
@@ -71,11 +71,11 @@ namespace BadDonkey.CommandHost
 
         private  async Task RunAll()
         {
-            _commands.Reset();
+            _commandList.Reset();
 
-            while (_commands.MoveNext())
+            while (_commandList.Next())
             {
-                await Run(_commands.Current);
+                await Run(_commandList.Current);
             }
 
             OnCommandProcessed();
@@ -92,6 +92,7 @@ namespace BadDonkey.CommandHost
 
                 var handler = lifetimeScope.ResolveNamed<ICommandHandler>(command.GetType().Name.Split("Command").First());
 
+                
                 OnCommandStart(command);
 
                 await ((dynamic) handler).Run();
@@ -100,8 +101,8 @@ namespace BadDonkey.CommandHost
             {
                 OnCommandException(new CommandException
                 {
-                    Name = _commands.Current?.Name,
-                    Kind = _commands.Current?.GetType().Name,
+                    Name = _commandList.Current?.Name,
+                    Kind = _commandList.Current?.GetType().Name,
                     Exception = ex
                 });
             }

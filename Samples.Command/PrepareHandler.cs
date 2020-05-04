@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
 using BadDonkey.CommandHost;
 using Microsoft.Extensions.Logging;
 
@@ -20,5 +21,7 @@ namespace Samples.Commands
             _logger.LogInformation($"PrepareHandler.Run: do nothing: {_command.Name}");
             return Task.CompletedTask;
         }
+
+        public Command Command => _command;
     }
 }

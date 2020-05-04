@@ -7,5 +7,7 @@ namespace BadDonkey.CommandHost
     {
         [UsedImplicitly]
         Task Run();
+
+        Command Command { get; }
     }
 }
