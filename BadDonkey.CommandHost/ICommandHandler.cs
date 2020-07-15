@@ -8,6 +8,6 @@ namespace BadDonkey.CommandHost
         [UsedImplicitly]
         Task Run();
 
-        Command Command { get; }
+        ICommand Command { get; }
     }
 }

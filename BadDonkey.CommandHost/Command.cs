@@ -1,6 +1,7 @@
-﻿namespace BadDonkey.CommandHost
+﻿
+namespace BadDonkey.CommandHost
 {
-    public abstract class Command
+    public abstract class Command : ICommand
     {
         public string Name { get; set; }
     }

@@ -38,7 +38,7 @@ namespace BadDonkey.CommandHost
             return Task.CompletedTask;
         }
 
-        protected virtual void OnCommandStart(Command command)
+        protected virtual void OnCommandStart(ICommand command)
         {
             var commandEvent = new CommandEvent
             {
@@ -81,7 +81,7 @@ namespace BadDonkey.CommandHost
             OnCommandProcessed();
         }
 
-        private async Task Run(Command command)
+        private async Task Run(ICommand command)
         {
             await using var lifetimeScope = AutoFacContainerProvider.Container.BeginLifetimeScope();
 

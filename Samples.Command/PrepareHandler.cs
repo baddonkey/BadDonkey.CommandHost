@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BadDonkey.CommandHost;
 using Microsoft.Extensions.Logging;
 
@@ -22,6 +21,6 @@ namespace Samples.Commands
             return Task.CompletedTask;
         }
 
-        public Command Command => _command;
+        public ICommand Command => _command;
     }
 }

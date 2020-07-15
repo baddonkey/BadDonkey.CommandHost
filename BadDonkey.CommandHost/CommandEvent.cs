@@ -4,6 +4,6 @@ namespace BadDonkey.CommandHost
 {
     public class CommandEvent : EventArgs
     {
-        public Command Command { get; set; }
+        public ICommand Command { get; set; }
     }
 }

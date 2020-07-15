@@ -2,16 +2,16 @@
 
 namespace BadDonkey.CommandHost
 {
-    public class CommandList : List<Command>
+    public class CommandList : List<ICommand>
     {
-        private IEnumerator<Command> _x;
+        private IEnumerator<ICommand> _x;
 
         public void Reset()
         {
             _x = GetEnumerator();
         }
 
-        public Command Current => _x.Current;
+        public ICommand Current => _x.Current;
 
         public bool Next() => _x.MoveNext();
     }

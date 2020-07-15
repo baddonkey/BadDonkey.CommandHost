@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using JsonSubTypes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
@@ -14,19 +15,34 @@ namespace BadDonkey.CommandHost
 {
     public static class CommandHostExtensions
     {
-        public static List<Command> GetCommandsFromAssembly(this JObject configuration, string key, Assembly commandAssembly)
+        private static List<ICommand>.Enumerator s_commands;
+
+        public static List<ICommand> GetCommandsFromConfiguration(this JObject configuration, string key, JsonSerializerSettings serializerSettings)
         {
-            var serializer = new JsonSerializer();
-            serializer.Converters.Add(new CommandConverter(commandAssembly));
-            return configuration[key].ToObject<List<Command>>(serializer);
+            return configuration[key].ToObject<List<ICommand>>(JsonSerializer.Create(serializerSettings));
         }
 
-        public static IHostBuilder UseCommandHost(this IHostBuilder hostBuilder, string commandFile, string section, Assembly commandAssembly = null)
+        public static IHostBuilder UseCommandHost(this IHostBuilder hostBuilder, string commandFile, string section, Assembly commandAssembly = null, JsonSerializerSettings serializerSettings = null)
         {
+            var settings = serializerSettings ?? new JsonSerializerSettings();
+
+            if (commandAssembly != null)
+            {
+                var converterBuilder = JsonSubtypesConverterBuilder.Of(typeof(ICommand), "kind");
+
+                var commandTypes = commandAssembly.GetTypes().Where(s => s.IsAssignableTo<ICommand>());
+
+                foreach (var command in commandTypes)
+                {
+                    converterBuilder.RegisterSubtype(command, command.Name);
+                }
+
+                settings.Converters.Add(converterBuilder.SerializeDiscriminatorProperty().Build());
+            }
+            
             hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-            var commands = JObject.Parse(File.ReadAllText(commandFile))
-                .GetCommandsFromAssembly(section, commandAssembly).GetEnumerator();
+            s_commands = JObject.Parse(File.ReadAllText(commandFile)).GetCommandsFromConfiguration(section, settings).GetEnumerator();
 
             hostBuilder.ConfigureServices((hostContext, services) =>services.AddHostedService(p => p.GetService<ICommandProcessor>()));
 
@@ -34,9 +50,9 @@ namespace BadDonkey.CommandHost
             {
                 var commandList = new CommandList();
 
-                while(commands.MoveNext())
+                while(s_commands.MoveNext())
                 {
-                    var command = commands.Current;
+                    var command = s_commands.Current;
 
                     if (command == null)
                         return;
